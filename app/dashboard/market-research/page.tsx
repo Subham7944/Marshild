@@ -3,6 +3,8 @@
 import { useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { MarketResearchResult } from '../../../types/market-research';
+import Link from 'next/link';
+import { ArrowLeft } from 'lucide-react';
 
 export default function MarketResearchPage() {
   const [researchData, setResearchData] = useState<MarketResearchResult | null>(null);
@@ -60,8 +62,13 @@ export default function MarketResearchPage() {
   }
 
   return (
-    <div className="space-y-6">
-      <h1 className="text-3xl font-bold">Market Research Results</h1>
+    <div className="p-6 space-y-6 max-w-7xl mx-auto">
+      <div className="flex items-center space-x-4">
+        <Link href="/dashboard" className="p-2 bg-green-50 rounded-full">
+          <ArrowLeft className="h-5 w-5 text-green-600" />
+        </Link>
+        <h1 className="text-3xl font-bold">Market Research Results</h1>
+      </div>
       
       {/* Competitors Section */}
       <div className="border rounded-lg bg-card text-card-foreground shadow-sm">

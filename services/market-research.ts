@@ -3,7 +3,7 @@ import { MarketResearchFormData, MarketResearchResult } from '../types/market-re
 /**
  * Calls the market research API to analyze a startup idea
  */
-export async function analyzeStartupIdea(formData: MarketResearchFormData): Promise<MarketResearchResult> {
+export async function analyzeMarketResearch(formData: MarketResearchFormData): Promise<MarketResearchResult> {
   try {
     const response = await fetch('/api/market-research', {
       method: 'POST',
@@ -17,8 +17,17 @@ export async function analyzeStartupIdea(formData: MarketResearchFormData): Prom
       const errorData = await response.json();
       throw new Error(errorData.error || 'Failed to analyze startup idea');
     }
-
-    return await response.json();
+    
+    const data = await response.json();
+    
+    // Generate a unique ID for this market research session
+    const marketResearchResult: MarketResearchResult = {
+      id: Date.now().toString(),
+      timestamp: Date.now(),
+      ...data
+    };
+    
+    return marketResearchResult;
   } catch (error) {
     console.error('Error analyzing startup:', error);
     throw error;

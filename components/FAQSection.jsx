@@ -49,7 +49,7 @@ export default function FAQSection() {
         >
           <h2 className="text-3xl md:text-4xl font-bold mb-4">Frequently Asked Questions</h2>
           <p className="text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
-            Everything you need to know about CursorAI
+            Everything you need to know about Marshild
           </p>
         </motion.div>
         
@@ -66,8 +66,8 @@ export default function FAQSection() {
               <button
                 className={`w-full text-left p-6 rounded-xl flex justify-between items-center transition-all duration-300 ${
                   activeIndex === index 
-                    ? 'bg-primary text-white shadow-lg' 
-                    : 'bg-gray-100 dark:bg-zinc-800 hover:bg-gray-200 dark:hover:bg-zinc-700'
+                    ? 'bg-primary text-gray-100 shadow-lg' 
+                    : 'bg-[#8E24AA] text-gray-100 hover:bg-[#8E24AA]/90 dark:bg-[#8E24AA]/90 dark:hover:bg-[#8E24AA]/80'
                 }`}
                 onClick={() => toggleFAQ(index)}
               >

@@ -3,16 +3,24 @@
 @tailwind utilities;
 
 :root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 248, 250, 252;
-  --background-end-rgb: 255, 255, 255;
+  --foreground-rgb: 33, 33, 33; /* #212121 Text Primary */
+  --background-start-rgb: 250, 250, 250; /* #FAFAFA Background */
+  --background-end-rgb: 241, 241, 241; /* #F1F1F1 Surface */
+  --purple-primary: 142, 36, 170; /* #8E24AA Primary */
+  --indigo-secondary: 57, 73, 171; /* #3949AB Secondary */
+  --coral-accent: 255, 112, 67; /* #FF7043 Accent */
+  --text-secondary: 97, 97, 97; /* #616161 Text Secondary */
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 24, 24, 27;
-    --background-end-rgb: 15, 15, 15;
+    --foreground-rgb: 241, 241, 241; /* Lighter text for dark mode */
+    --background-start-rgb: 33, 33, 33; /* Darker background for dark mode */
+    --background-end-rgb: 21, 21, 21; /* Even darker background for dark mode */
+    --purple-primary: 171, 71, 188; /* Lighter purple for dark mode - #AB47BC */
+    --indigo-secondary: 92, 107, 192; /* Lighter indigo for dark mode - #5C6BC0 */
+    --coral-accent: 255, 138, 101; /* Lighter coral for dark mode - #FF8A65 */
+    --text-secondary: 158, 158, 158; /* Lighter text secondary for dark mode - #9E9E9E */
   }
 }
 
@@ -26,9 +34,121 @@ body {
     rgb(var(--background-start-rgb));
 }
 
+body.dark {
+  color: #F1F1F1;
+  background: linear-gradient(
+      to bottom,
+      transparent,
+      rgba(21, 21, 21, 0.9)
+    )
+    rgb(33, 33, 33);
+}
+
+/* Dark mode styling */
+.dark body {
+  color: #F1F1F1;
+  background: linear-gradient(
+      to bottom,
+      transparent,
+      rgba(21, 21, 21, 0.9)
+    )
+    rgb(33, 33, 33);
+}
+
+/* Dark mode styles for Marshild header */
+.dark [class*="MarshildHeader"],
+.dark header,
+.dark nav {
+  background-color: #121212;
+  color: #fff;
+}
+
+.dark a {
+  color: #f0f0f0;
+}
+
+/* Dark mode card styles */
+.dark .bg-card,
+.dark .bg-background,
+.dark [class*="bg-white"],
+.dark div[class*="bg-slate-50"] {
+  background-color: #212121 !important;
+  color: #F1F1F1 !important;
+  border-color: rgba(171, 71, 188, 0.2) !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2) !important;
+}
+
+.dark .text-card-foreground {
+  color: #fff !important;
+}
+
+.dark .text-muted-foreground {
+  color: #a0a0a0 !important;
+}
+
 @layer utilities {
   .text-balance {
     text-wrap: balance;
+  }
+}
+
+@layer base {
+  * {
+    border-color: hsl(var(--border));
+  }
+  body {
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
+  }
+}
+
+/* Base dark mode variables */
+@layer base {
+  :root {
+    /* Colors based on the specified palette */
+    --background: 0 0% 98%; /* #FAFAFA */
+    --foreground: 0 0% 13%; /* #212121 */
+    --card: 0 0% 95%; /* #F1F1F1 */
+    --card-foreground: 0 0% 13%; /* #212121 */
+    --popover: 0 0% 95%; /* #F1F1F1 */
+    --popover-foreground: 0 0% 13%; /* #212121 */
+    --primary: 291 67% 40%; /* #8E24AA */
+    --primary-foreground: 0 0% 100%;
+    --secondary: 231 50% 45%; /* #3949AB */
+    --secondary-foreground: 0 0% 100%;
+    --muted: 0 0% 95%; /* #F1F1F1 slightly darker */
+    --muted-foreground: 0 0% 38%; /* #616161 */
+    --accent: 14 100% 63%; /* #FF7043 */
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 0% 89.8%; /* Light border color */
+    --input: 0 0% 89.8%;
+    --ring: 291 67% 40%; /* #8E24AA */
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    /* Dark mode colors based on the specified palette but darkened/adjusted */
+    --background: 0 0% 13%; /* #212121 */
+    --foreground: 0 0% 95%; /* #F1F1F1 */
+    --card: 0 0% 15%; /* Slightly lighter than background */
+    --card-foreground: 0 0% 95%; /* #F1F1F1 */
+    --popover: 0 0% 18%; /* Slightly lighter than background */
+    --popover-foreground: 0 0% 95%; /* #F1F1F1 */
+    --primary: 291 47% 51%; /* #AB47BC - Lighter version of primary */
+    --primary-foreground: 0 0% 100%;
+    --secondary: 231 38% 56%; /* #5C6BC0 - Lighter version of secondary */
+    --secondary-foreground: 0 0% 100%;
+    --muted: 0 0% 20%; /* Darker muted */
+    --muted-foreground: 0 0% 62%; /* #9E9E9E */
+    --accent: 14 100% 70%; /* #FF8A65 - Lighter version of accent */
+    --accent-foreground: 0 0% 0%;
+    --destructive: 0 62.8% 40%;
+    --destructive-foreground: 0 0% 95%;
+    --border: 0 0% 25%; /* Darker border color */
+    --input: 0 0% 25%;
+    --ring: 291 47% 51%; /* #AB47BC */
   }
 }
 

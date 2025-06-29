@@ -1,12 +1,15 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth, useUser } from '@clerk/nextjs';
 import { useRouter } from 'next/navigation';
 import { redirect } from 'next/navigation';
-import { Settings, CreditCard, User, Search, BarChart3, FileText, Brain } from 'lucide-react';
+import { Settings, CreditCard, User, Search, BarChart3, FileText, Brain, BarChart4 } from 'lucide-react';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "../../components/ui/card.jsx";
 import { Input } from "../../components/ui/input.jsx";
+import { analyzeMarketResearch } from '../../services/market-research';
+import { getBrainstormingInsights } from '../../services/brainstorming';
+import { getSWOTAnalysis } from '../../services/swot';
 
 export default function Dashboard() {
   // Client-side auth check using hooks
@@ -23,7 +26,54 @@ export default function Dashboard() {
   // State for API request handling
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analysisError, setAnalysisError] = useState('');
-  const [researchId, setResearchId] = useState('');
+  const [marketResearchId, setMarketResearchId] = useState('');
+  const [brainstormingId, setBrainstormingId] = useState('');
+  const [swotId, setSwotId] = useState('');
+  
+  // Set up the useEffect hook BEFORE any conditional returns
+  useEffect(() => {
+    // Only run the localStorage checks if the user is authenticated
+    if (!isLoaded || !userId) return;
+    
+    // Check for market research data
+    const existingResearchIds = Object.keys(localStorage).filter(
+      key => key.startsWith('market-research-')
+    );
+    if (existingResearchIds.length > 0) {
+      // Just use the most recent one if there are multiple
+      const mostRecentId = existingResearchIds
+        .map(key => key.replace('market-research-', ''))
+        .sort((a, b) => parseInt(b) - parseInt(a))[0];
+      
+      setMarketResearchId(mostRecentId);
+    }
+    
+    // Check for brainstorming data
+    const existingBrainstormingIds = Object.keys(localStorage).filter(
+      key => key.startsWith('brainstorming-')
+    );
+    if (existingBrainstormingIds.length > 0) {
+      // Just use the most recent one if there are multiple
+      const mostRecentId = existingBrainstormingIds
+        .map(key => key.replace('brainstorming-', ''))
+        .sort((a, b) => parseInt(b) - parseInt(a))[0];
+      
+      setBrainstormingId(mostRecentId);
+    }
+    
+    // Check for SWOT analysis data
+    const existingSwotIds = Object.keys(localStorage).filter(
+      key => key.startsWith('swot-')
+    );
+    if (existingSwotIds.length > 0) {
+      // Just use the most recent one if there are multiple
+      const mostRecentId = existingSwotIds
+        .map(key => key.replace('swot-', ''))
+        .sort((a, b) => parseInt(b) - parseInt(a))[0];
+      
+      setSwotId(mostRecentId);
+    }
+  }, [isLoaded, userId]); // Add isLoaded and userId as dependencies
   
   // Handle loading state
   if (!isLoaded) {
@@ -39,6 +89,7 @@ export default function Dashboard() {
     redirect('/sign-in');
   }
 
+
   // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -53,35 +104,33 @@ export default function Dashboard() {
     setAnalysisError('');
     
     try {
-      const response = await fetch('/api/market-research', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ industry, location, audience, description }),
-      });
+      // Prepare form data
+      const formData = { industry, location, audience, description };
       
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to analyze startup idea');
-      }
+      // Call all three APIs in parallel for better performance
+      const [marketResult, brainstormingResult, swotResult] = await Promise.all([
+        analyzeMarketResearch(formData),
+        getBrainstormingInsights(formData),
+        getSWOTAnalysis(formData)
+      ]);
       
-      const researchData = await response.json();
+      // Store market research results in localStorage
+      localStorage.setItem(`market-research-${marketResult.id}`, JSON.stringify(marketResult));
+      setMarketResearchId(marketResult.id);
+
+      // Store brainstorming results in localStorage
+      localStorage.setItem(`brainstorming-${brainstormingResult.id}`, JSON.stringify(brainstormingResult));
+      setBrainstormingId(brainstormingResult.id);
       
-      // Generate a unique ID for this research result
-      const newResearchId = Date.now().toString();
-      
-      // Store the result in localStorage
-      localStorage.setItem(`market-research-${newResearchId}`, JSON.stringify(researchData));
-      
-      // Update state with the new research ID
-      setResearchId(newResearchId);
+      // Store SWOT analysis results in localStorage
+      localStorage.setItem(`swot-${swotResult.id}`, JSON.stringify(swotResult));
+      setSwotId(swotResult.id);
       
       // Navigate to the results page
-      router.push(`/dashboard/market-research?id=${newResearchId}`);
+      router.push(`/dashboard/market-research?id=${marketResult.id}`);
     } catch (error) {
       console.error('Analysis error:', error);
-      setAnalysisError(error.message || 'Failed to analyze startup. Please try again.');
+      setAnalysisError(error.message || 'Failed to analyze data');
     } finally {
       setIsAnalyzing(false);
     }
@@ -185,13 +234,13 @@ export default function Dashboard() {
       
       {/* Quick action cards */}
       <h2 className="text-2xl font-bold mt-6 mb-4">Quick Actions</h2>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {/* Market Research */}
         <Card 
-          className={`border-none shadow-sm hover:shadow-md transition-all cursor-pointer ${researchId ? 'ring-2 ring-purple-500' : ''}`}
+          className={`border-none shadow-sm hover:shadow-md transition-all cursor-pointer ${marketResearchId ? 'ring-2 ring-purple-500' : ''}`}
           onClick={() => {
-            if (researchId) {
-              router.push(`/dashboard/market-research?id=${researchId}`);
+            if (marketResearchId) {
+              router.push(`/dashboard/market-research?id=${marketResearchId}`);
             } else {
               // Scroll to the form
               document.getElementById('analysis-form')?.scrollIntoView({ behavior: 'smooth' });
@@ -206,45 +255,25 @@ export default function Dashboard() {
               <div>
                 <h3 className="font-medium">Market Research</h3>
                 <p className="text-sm text-muted-foreground mt-1">
-                  {researchId ? 'View your market research results' : 'Analyze market trends and opportunities'}
+                  {marketResearchId ? 'View your market research results' : 'Analyze market trends and opportunities'}
                 </p>
               </div>
             </div>
           </CardContent>
         </Card>
 
-        {/* SWOT Analysis */}
-        <Card className="border-none shadow-sm hover:shadow-md transition-all cursor-pointer">
-          <CardContent className="pt-6">
-            <div className="flex items-start space-x-4">
-              <div className="bg-blue-100 dark:bg-blue-900/20 p-2 rounded-md">
-                <FileText className="h-6 w-6 text-blue-600 dark:text-blue-400" />
-              </div>
-              <div>
-                <h3 className="font-medium">SWOT Analysis</h3>
-                <p className="text-sm text-muted-foreground mt-1">Identify strengths, weaknesses, opportunities</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Risk Assessment */}
-        <Card className="border-none shadow-sm hover:shadow-md transition-all cursor-pointer">
-          <CardContent className="pt-6">
-            <div className="flex items-start space-x-4">
-              <div className="bg-amber-100 dark:bg-amber-900/20 p-2 rounded-md">
-                <BarChart3 className="h-6 w-6 text-amber-600 dark:text-amber-400" />
-              </div>
-              <div>
-                <h3 className="font-medium">Risk Assessment</h3>
-                <p className="text-sm text-muted-foreground mt-1">Evaluate potential risks and mitigations</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
         {/* Brainstorming */}
-        <Card className="border-none shadow-sm hover:shadow-md transition-all cursor-pointer">
+        <Card 
+          className={`border-none shadow-sm hover:shadow-md transition-all cursor-pointer ${brainstormingId ? 'ring-2 ring-green-500' : ''}`}
+          onClick={() => {
+            if (brainstormingId) {
+              router.push(`/dashboard/brainstorming?id=${brainstormingId}`);
+            } else {
+              // Scroll to the form
+              document.getElementById('analysis-form')?.scrollIntoView({ behavior: 'smooth' });
+            }
+          }}
+        >
           <CardContent className="pt-6">
             <div className="flex items-start space-x-4">
               <div className="bg-green-100 dark:bg-green-900/20 p-2 rounded-md">
@@ -252,7 +281,36 @@ export default function Dashboard() {
               </div>
               <div>
                 <h3 className="font-medium">Brainstorming</h3>
-                <p className="text-sm text-muted-foreground mt-1">Generate creative startup ideas and solutions</p>
+                <p className="text-sm text-muted-foreground mt-1">
+                  {brainstormingId ? 'View your growth & monetization strategies' : 'Generate business strategies for your startup'}
+                </p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* SWOT Analysis */}
+        <Card 
+          className={`border-none shadow-sm hover:shadow-md transition-all cursor-pointer ${swotId ? 'ring-2 ring-blue-500' : ''}`}
+          onClick={() => {
+            if (swotId) {
+              router.push(`/dashboard/swot?id=${swotId}`);
+            } else {
+              // Scroll to the form
+              document.getElementById('analysis-form')?.scrollIntoView({ behavior: 'smooth' });
+            }
+          }}
+        >
+          <CardContent className="pt-6">
+            <div className="flex items-start space-x-4">
+              <div className="bg-blue-100 dark:bg-blue-900/20 p-2 rounded-md">
+                <BarChart4 className="h-6 w-6 text-blue-600 dark:text-blue-400" />
+              </div>
+              <div>
+                <h3 className="font-medium">SWOT Analysis</h3>
+                <p className="text-sm text-muted-foreground mt-1">
+                  {swotId ? 'View your detailed SWOT analysis' : 'Assess strengths, weaknesses, opportunities, and threats'}
+                </p>
               </div>
             </div>
           </CardContent>
