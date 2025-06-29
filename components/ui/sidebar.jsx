@@ -13,7 +13,7 @@ const Sidebar = ({ children, className, ...props }) => {
   return (
     <aside
       className={cn(
-        "flex flex-col h-screen bg-gradient-to-b from-slate-800 to-slate-950 text-white transition-all duration-300 ease-in-out fixed z-50 top-0 left-0",
+        "flex flex-col h-screen bg-gradient-to-b from-slate-50 to-slate-100 dark:from-[#212121] dark:to-[#212121] text-slate-900 dark:text-white transition-all duration-300 ease-in-out fixed z-50 top-0 left-0",
         collapsed ? "w-[70px]" : "w-64",
         className
       )}
@@ -30,7 +30,7 @@ const SidebarHeader = React.forwardRef(({ className, children, ...props }, ref) 
     <div
       ref={ref}
       className={cn(
-        "flex h-14 items-center border-b px-4",
+        "flex h-14 items-center border-b px-4 bg-white dark:bg-[#212121]",
         className
       )}
       {...props}
@@ -45,7 +45,7 @@ const SidebarContent = React.forwardRef(({ className, children, ...props }, ref)
   return (
     <div
       ref={ref}
-      className={cn("flex-1 overflow-auto py-2", className)}
+      className={cn("flex-1 overflow-auto py-2 bg-white dark:bg-[#212121]", className)}
       {...props}
     >
       {children}
@@ -58,7 +58,7 @@ const SidebarFooter = React.forwardRef(({ className, children, ...props }, ref) 
   return (
     <div
       ref={ref}
-      className={cn("flex items-center border-t p-4", className)}
+      className={cn("flex items-center border-t p-4 bg-white dark:bg-[#212121]", className)}
       {...props}
     >
       {children}
@@ -70,7 +70,7 @@ SidebarFooter.displayName = "SidebarFooter"
 const SidebarGroup = React.forwardRef(
   ({ className, title, icon, children, ...props }, ref) => {
     return (
-      <div ref={ref} className={cn("px-2 py-1", className)} {...props}>
+      <div ref={ref} className={cn("px-2 py-1 bg-white dark:bg-[#212121]", className)} {...props}>
         {(title || icon) && (
           <div className="mb-1 flex items-center gap-2 px-3 py-1">
             {icon}
@@ -122,7 +122,7 @@ SidebarTrigger.displayName = "SidebarTrigger"
 
 const SidebarMenu = React.forwardRef(({ className, ...props }, ref) => {
   return (
-    <nav ref={ref} className={cn("flex flex-col gap-1", className)} {...props} />
+    <nav ref={ref} className={cn("flex flex-col gap-1 bg-white dark:bg-[#212121]", className)} {...props} />
   )
 })
 SidebarMenu.displayName = "SidebarMenu"

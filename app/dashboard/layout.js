@@ -10,14 +10,13 @@ function DashboardContent({ children }) {
   
   return (
     <main 
-      className="flex-1 min-h-screen overflow-y-auto bg-slate-50 dark:bg-slate-950 w-full transition-all duration-300"
+      className="flex-1 min-h-screen overflow-y-auto bg-slate-50 dark:bg-[#212121] w-full transition-all duration-300"
       style={{
-        marginLeft: collapsed ? '70px' : '256px'
+        marginLeft: collapsed ? '76px' : '256px'
       }}
     >
-      <div className="relative p-4 lg:p-6 w-full">
-        <SidebarTrigger className="fixed top-4 left-4 z-50 md:absolute bg-white dark:bg-slate-800 w-10 h-10 flex items-center justify-center rounded-lg shadow-md hover:shadow-lg" />
-        <div className="mt-8">
+      <div className="relative p-4 lg:p-6 w-full bg-slate-50 dark:bg-[#212121]">
+        <div>
           {children}
         </div>
       </div>
