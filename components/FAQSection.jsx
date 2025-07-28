@@ -5,8 +5,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 
 const faqs = [
   {
-    question: "How accurate is CursorAI's idea validation?",
-    answer: "CursorAI uses advanced AI models trained on thousands of successful and failed startups. Our validation accuracy is approximately 85% when comparing to real-world outcomes, making it a reliable first step in your startup journey."
+    question: "How accurate is Marshild's idea validation?",
+    answer: "Marshild uses advanced AI models trained on thousands of successful and failed startups. Our validation accuracy is approximately 85% when comparing to real-world outcomes, making it a reliable first step in your startup journey."
   },
   {
     question: 'Can I export my validation results?',
@@ -49,7 +49,7 @@ export default function FAQSection() {
         >
           <h2 className="text-3xl md:text-4xl font-bold mb-4">Frequently Asked Questions</h2>
           <p className="text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
-            Everything you need to know about CursorAI
+            Everything you need to know about Marshild
           </p>
         </motion.div>
         

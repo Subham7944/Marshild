@@ -1,0 +1,15 @@
+{
+  "startup": {
+    "industry": "HealthTech, Fitness",
+    "location": "North America",
+    "audience": "Young professionals, Busy executives",
+    "description": "AI-powered fitness app that creates personalized workout plans for time-constrained professionals"
+  },
+  "results": {
+    "marketSize": "$4.2B",
+    "growthRate": "23%",
+    "trendGrowth": "34%",
+    "competitorCount": 12,
+    "marketFitScore": 87
+  }
+}
