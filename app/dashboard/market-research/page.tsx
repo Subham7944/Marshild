@@ -19,7 +19,6 @@ export default function MarketResearchPage() {
   const searchParams = useSearchParams();
   const researchId = searchParams.get('id');
   
-  // Global startup idea context
   const { ideaData, updateIdeaData, isLoaded: contextLoaded, hasIdeaData } = useStartupIdea();
 
   const handleMarketResearch = async (e = null) => {
@@ -54,8 +53,6 @@ export default function MarketResearchPage() {
 
       const data = await response.json();
       setResearchData(data);
-      
-      // Cache the results
       setCachedAnalysis(ideaData, 'market-research', data);
       
     } catch (error) {
@@ -66,10 +63,8 @@ export default function MarketResearchPage() {
     }
   };
 
-  // Auto-run analysis when context loads with complete data
   useEffect(() => {
     if (contextLoaded && ideaData && !researchData && !isLoading) {
-      // Check for cached results first
       if (ideaData.industry && ideaData.location && ideaData.audience) {
         const cachedResult = getCachedAnalysis(ideaData, 'market-research');
         if (cachedResult) {
@@ -81,8 +76,7 @@ export default function MarketResearchPage() {
         }
       }
     }
-    
-    // If we have a research ID, fetch the data from localStorage
+
     if (researchId && !researchData) {
       try {
         const storedData = localStorage.getItem(`market-research-${researchId}`);
@@ -177,13 +171,11 @@ export default function MarketResearchPage() {
 
   return (
     <div className="p-6 space-y-6">
-      {/* Header */}
       <div className="bg-gradient-to-r from-blue-500 to-purple-600 text-white p-6 rounded-lg">
         <h1 className="text-3xl font-bold mb-1">📊 Market Research</h1>
         <p className="opacity-90">Comprehensive market analysis and competitor insights</p>
       </div>
 
-      {/* Generate Research Button */}
       {!researchData && !isLoading && (
         <Card>
           <CardHeader>
@@ -203,10 +195,8 @@ export default function MarketResearchPage() {
         </Card>
       )}
 
-      {/* Research Results */}
       {researchData && (
         <div className="space-y-6">
-          {/* Competitors Section */}
           {researchData.competitors && researchData.competitors.length > 0 && (
             <Card>
               <CardHeader>
@@ -248,8 +238,7 @@ export default function MarketResearchPage() {
               </CardContent>
             </Card>
           )}
-          
-          {/* Market Trends Section */}
+
           {researchData.marketTrends && (
             <Card>
               <CardHeader>
@@ -266,8 +255,7 @@ export default function MarketResearchPage() {
               </CardContent>
             </Card>
           )}
-          
-          {/* Market Potential Section */}
+
           {researchData.marketPotential && (
             <Card>
               <CardHeader>
@@ -285,7 +273,6 @@ export default function MarketResearchPage() {
             </Card>
           )}
 
-          {/* Cross-Page Navigation */}
           <div className="mt-8">
             <CrossPageNavigation 
               currentPage="market-research"

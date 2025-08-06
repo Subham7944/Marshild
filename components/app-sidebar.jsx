@@ -9,11 +9,9 @@ import { Button } from './ui/button';
 import {
   Sidebar,
   SidebarContent,
-  SidebarFooter,
   SidebarGroup,
   SidebarHeader,
   SidebarMenu,
-  SidebarMenuItem,
   SidebarMenuButton,
   useSidebar,
 } from './ui/sidebar';
@@ -53,7 +51,6 @@ export function AppSidebar() {
 
   return (
     <Sidebar className="bg-gradient-to-b from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-950 border-r border-slate-200 dark:border-slate-800">
-      {/* Enhanced Header */}
       <SidebarHeader className="bg-gradient-to-r from-purple-600 to-blue-600 text-white p-4 shadow-lg">
         <div className="flex items-center justify-between w-full">
           <Link href="/" className="cursor-pointer hover:opacity-80 transition-all duration-200 hover:scale-105">
@@ -73,8 +70,7 @@ export function AppSidebar() {
               )}
             </div>
           </Link>
-          
-          {/* Sidebar Toggle Button */}
+
           <button
             onClick={() => setCollapsed(!collapsed)}
             className="p-2 rounded-lg bg-white/10 hover:bg-white/20 transition-all duration-200 hover:scale-105 border border-white/20"
@@ -89,7 +85,6 @@ export function AppSidebar() {
         </div>
       </SidebarHeader>
 
-      {/* Enhanced User Profile Section */}
       {isLoaded && user && (
         <div className={cn(
           "flex border-b border-slate-200 dark:border-slate-800 bg-white/50 dark:bg-slate-800/50 transition-all duration-300",
@@ -106,7 +101,7 @@ export function AppSidebar() {
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent"></div>
           </div>
-          
+
           {!collapsed && (
             <div className="ml-4 overflow-hidden flex-1">
               <p className="font-semibold text-slate-900 dark:text-white truncate text-sm">
@@ -124,7 +119,6 @@ export function AppSidebar() {
         </div>
       )}
 
-      {/* Enhanced Navigation */}
       <SidebarContent className="px-3 py-4">
         <SidebarGroup>
           {!collapsed && (
@@ -136,19 +130,20 @@ export function AppSidebar() {
             </div>
           )}
           <SidebarMenu className="space-y-1">
-            {navItems.map((item, index) => (
-              <SidebarMenuItem key={item.name}>
-                <Link href={item.href} passHref>
-                  <SidebarMenuButton 
-                    className={cn(
-                      "group relative overflow-hidden transition-all duration-200 hover:scale-[1.02] hover:shadow-sm",
-                      "rounded-lg border border-transparent hover:border-purple-200 dark:hover:border-purple-800",
-                      pathname === item.href 
-                        ? "bg-gradient-to-r from-purple-500 to-blue-500 text-white shadow-lg scale-[1.02]" 
-                        : "hover:bg-gradient-to-r hover:from-purple-50 hover:to-blue-50 dark:hover:from-purple-900/20 dark:hover:to-blue-900/20",
-                      collapsed ? "justify-center p-3" : "justify-start p-3"
-                    )}
-                  >
+            {navItems.map((item) => (
+              <div key={item.name}>
+                <SidebarMenuButton 
+                  className={cn(
+                    "group relative overflow-hidden transition-all duration-200 hover:scale-[1.02] hover:shadow-sm",
+                    "rounded-lg border border-transparent hover:border-purple-200 dark:hover:border-purple-800",
+                    pathname === item.href 
+                      ? "bg-gradient-to-r from-purple-500 to-blue-500 text-white shadow-lg scale-[1.02]" 
+                      : "hover:bg-gradient-to-r hover:from-purple-50 hover:to-blue-50 dark:hover:from-purple-900/20 dark:hover:to-blue-900/20",
+                    collapsed ? "justify-center p-3" : "justify-start p-3"
+                  )}
+                  asChild
+                >
+                  <Link href={item.href}>
                     <div className={cn(
                       "flex items-center transition-colors duration-200",
                       pathname === item.href ? "text-white" : "text-slate-600 dark:text-slate-300",
@@ -164,20 +159,14 @@ export function AppSidebar() {
                         <span className="font-medium text-sm truncate">{item.name}</span>
                       )}
                     </div>
-                    
-                    {/* Active indicator */}
-                    {pathname === item.href && (
-                      <div className="absolute inset-0 bg-gradient-to-r from-white/10 to-white/5 pointer-events-none"></div>
-                    )}
-                  </SidebarMenuButton>
-                </Link>
-              </SidebarMenuItem>
+                  </Link>
+                </SidebarMenuButton>
+              </div>
             ))}
           </SidebarMenu>
         </SidebarGroup>
       </SidebarContent>
-      
-      {/* Enhanced Footer */}
+
       <SidebarFooter className="p-3 border-t border-slate-200 dark:border-slate-800 bg-white/30 dark:bg-slate-800/30">
         <button 
           className={cn(
