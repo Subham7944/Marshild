@@ -11,7 +11,7 @@ const cards = [
   },
   {
     title: 'The Solution',
-    text: 'CursorAI delivers instant AI-powered insights, risk scoring, and pitch deck exports to validate your idea before you build.',
+    text: 'Marshild delivers instant AI-powered insights, risk scoring, and pitch deck exports to validate your idea before you build.',
     icon: '🚀',
   },
 ];
@@ -27,7 +27,7 @@ export default function ProblemSolutionSection() {
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
         >
-          Why Founders Choose <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">CursorAI</span>
+          Why Founders Choose <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">Marshild</span>
         </motion.h2>
         
         <div className="grid md:grid-cols-2 gap-12">

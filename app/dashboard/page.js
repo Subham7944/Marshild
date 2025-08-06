@@ -1,18 +1,15 @@
 "use client";
 
-import { useState, useEffect } from 'react';
-import { useAuth, useUser } from '@clerk/nextjs';
+
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { redirect } from 'next/navigation';
-import { Settings, CreditCard, User, Search, BarChart3, FileText, Brain, BarChart4 } from 'lucide-react';
+import { useAuth, useUser } from '@clerk/nextjs';
+import { Settings, CreditCard, User, Search, BarChart3, FileText, Brain } from 'lucide-react';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "../../components/ui/card.jsx";
 import { Input } from "../../components/ui/input.jsx";
-import { analyzeMarketResearch } from '../../services/market-research';
-import { getBrainstormingInsights } from '../../services/brainstorming';
-import { getSWOTAnalysis } from '../../services/swot';
+import CrossPageNavigation from '../../components/CrossPageNavigation';
 
 export default function Dashboard() {
-  // Client-side auth check using hooks
   const { userId } = useAuth();
   const { user, isLoaded } = useUser();
   const router = useRouter();
@@ -91,50 +88,47 @@ export default function Dashboard() {
 
 
   // Handle form submission
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    
-    // Validate form
-    if (!industry || !location || !audience) {
-      setAnalysisError('Please fill all required fields');
-      return;
-    }
-    
-    setIsAnalyzing(true);
-    setAnalysisError('');
-    
-    try {
-      // Prepare form data
-      const formData = { industry, location, audience, description };
-      
-      // Call all three APIs in parallel for better performance
-      const [marketResult, brainstormingResult, swotResult] = await Promise.all([
-        analyzeMarketResearch(formData),
-        getBrainstormingInsights(formData),
-        getSWOTAnalysis(formData)
-      ]);
-      
-      // Store market research results in localStorage
-      localStorage.setItem(`market-research-${marketResult.id}`, JSON.stringify(marketResult));
-      setMarketResearchId(marketResult.id);
+ const handleSubmit = async (e) => {
+  e.preventDefault();
 
-      // Store brainstorming results in localStorage
-      localStorage.setItem(`brainstorming-${brainstormingResult.id}`, JSON.stringify(brainstormingResult));
-      setBrainstormingId(brainstormingResult.id);
-      
-      // Store SWOT analysis results in localStorage
-      localStorage.setItem(`swot-${swotResult.id}`, JSON.stringify(swotResult));
-      setSwotId(swotResult.id);
-      
-      // Navigate to the results page
-      router.push(`/dashboard/market-research?id=${marketResult.id}`);
-    } catch (error) {
-      console.error('Analysis error:', error);
-      setAnalysisError(error.message || 'Failed to analyze data');
-    } finally {
-      setIsAnalyzing(false);
+  // Validate form
+  if (!industry || !location || !audience) {
+    setAnalysisError('Please fill all required fields');
+    return;
+  }
+
+  setIsAnalyzing(true);
+  setAnalysisError('');
+
+  try {
+    const response = await fetch('/api/validation', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ industry, location, audience, description }),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.error || 'Failed to analyze startup idea');
     }
-  };
+
+    const validationData = await response.json();
+
+    const newResearchId = Date.now().toString();
+
+    localStorage.setItem(`validation-${newResearchId}`, JSON.stringify(validationData));
+
+    router.push(`/dashboard/validation-results?id=${newResearchId}`);
+  } catch (error) {
+    console.error('Analysis error:', error);
+    setAnalysisError(error.message || 'Failed to analyze data');
+  } finally {
+    setIsAnalyzing(false);
+  }
+};
+
 
   return (
     <div className="space-y-6 pt-16 md:pt-10">
@@ -195,13 +189,15 @@ export default function Dashboard() {
               
               <div className="grid gap-2">
                 <label htmlFor="description" className="text-sm font-medium">
-                  Description
+                  Startup Description (Optional)
                 </label>
-                <Input 
+                <textarea 
                   id="description" 
-                  placeholder="e.g.Describe your project in few words" 
+                  placeholder="Describe your startup idea in detail. What problem does it solve? What makes it unique?" 
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
+                  className="flex min-h-[80px] w-full rounded-md border border-gray-300 bg-white dark:bg-gray-800 px-3 py-2 text-sm text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-gray-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 resize-vertical"
+                  rows={3}
                 />
               </div>
             </div>
@@ -225,7 +221,7 @@ export default function Dashboard() {
                   Analyzing...
                 </>
               ) : (
-                'Analyze Startup Potential'
+                'Validate Startup Potential'
               )}
             </button>
           </form>
@@ -316,6 +312,22 @@ export default function Dashboard() {
           </CardContent>
         </Card>
       </div>
+
+      {/* Continue Your Analysis Section */}
+      {researchId && (
+        <div className="mt-8">
+          <h2 className="text-2xl font-bold mb-4">Continue Your Analysis</h2>
+          <CrossPageNavigation 
+            currentPage="dashboard"
+            startupIdea={{
+              industry,
+              location,
+              audience,
+              description
+            }}
+          />
+        </div>
+      )}
 
       <style jsx global>{`
         .wave-emoji {
