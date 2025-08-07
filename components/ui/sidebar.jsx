@@ -31,7 +31,7 @@ const SidebarHeader = React.forwardRef(({ className, children, ...props }, ref) 
     <div
       ref={ref}
       className={cn(
-        "flex h-14 items-center border-b px-4 bg-white dark:bg-[#212121]",
+        "flex h-14 items-center border-b px-4",
         className
       )}
       {...props}
@@ -46,7 +46,7 @@ const SidebarContent = React.forwardRef(({ className, children, ...props }, ref)
   return (
     <div
       ref={ref}
-      className={cn("flex-1 overflow-auto py-2 bg-white dark:bg-[#212121]", className)}
+      className={cn("flex-1 overflow-auto py-2", className)}
       {...props}
     >
       {children}
@@ -59,7 +59,7 @@ const SidebarFooter = React.forwardRef(({ className, children, ...props }, ref) 
   return (
     <div
       ref={ref}
-      className={cn("flex items-center border-t p-4 bg-white dark:bg-[#212121]", className)}
+      className={cn("flex items-center border-t p-4", className)}
       {...props}
     >
       {children}
@@ -71,7 +71,7 @@ SidebarFooter.displayName = "SidebarFooter"
 const SidebarGroup = React.forwardRef(
   ({ className, title, icon, children, ...props }, ref) => {
     return (
-      <div ref={ref} className={cn("px-2 py-1 bg-white dark:bg-[#212121]", className)} {...props}>
+      <div ref={ref} className={cn("px-2 py-1", className)} {...props}>
         {(title || icon) && (
           <div className="mb-1 flex items-center gap-2 px-3 py-1">
             {icon}
@@ -123,7 +123,7 @@ SidebarTrigger.displayName = "SidebarTrigger"
 
 const SidebarMenu = React.forwardRef(({ className, ...props }, ref) => {
   return (
-    <nav ref={ref} className={cn("flex flex-col gap-1 bg-white dark:bg-[#212121]", className)} {...props} />
+    <nav ref={ref} className={cn("flex flex-col gap-1", className)} {...props} />
   )
 })
 SidebarMenu.displayName = "SidebarMenu"

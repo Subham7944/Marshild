@@ -1,6 +1,6 @@
 import { Inter } from 'next/font/google'
 import './globals.css'
-import ConditionalHeader from '../components/ConditionalHeader'
+import Header from '../components/Header'
 import ThemeToggle from '../components/ThemeToggle'
 import ConditionalClerkProvider from '../components/ConditionalClerkProvider'
 import { StartupIdeaProvider } from '../contexts/StartupIdeaContext.jsx'
