@@ -1,22 +1,11 @@
 "use client";
 
-import { useUser } from "@clerk/nextjs";
-import { SignOutButton } from "@clerk/nextjs";
-import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
-import {
-  LayoutDashboard,
-  Search,
-  BarChart3,
-  Settings,
-  FileText,
-  Brain,
-  Lightbulb,
-  Users,
-  LogOut
-} from "lucide-react";
-
+import React from 'react';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import { useUser, useClerk } from '@clerk/nextjs';
+import { cn } from '../lib/utils';
+import { Button } from './ui/button';
 import {
   Sidebar,
   SidebarContent,
@@ -26,158 +15,183 @@ import {
   SidebarMenu,
   SidebarMenuItem,
   SidebarMenuButton,
-  SidebarMenuItem,
-  SidebarFooter,
-  SidebarTrigger,
   useSidebar,
-} from "./ui/sidebar.jsx";
-import { cn } from "../lib/utils";
+} from './ui/sidebar';
+import {
+  BarChart3,
+  Brain,
+  FileText,
+  Home,
+  LayoutDashboard,
+  Lightbulb,
+  LogOut,
+  Menu,
+  Search,
+  Settings,
+  TrendingUp,
+  Users,
+  X,
+  Zap,
+} from 'lucide-react';
 
 export function AppSidebar() {
   const { user, isLoaded } = useUser();
+  const { signOut } = useClerk();
   const pathname = usePathname();
-  const router = useRouter();
-  const { collapsed } = useSidebar();
-  
-  // State for analysis IDs
-  const [marketResearchId, setMarketResearchId] = useState('');
-  const [brainstormingId, setBrainstormingId] = useState('');
-  const [swotId, setSwotId] = useState('');
-  
-  // Load IDs from localStorage
-  useEffect(() => {
-    if (typeof window === 'undefined' || !isLoaded) return;
-    
-    // Get Market Research ID
-    const existingResearchIds = Object.keys(localStorage).filter(
-      key => key.startsWith('market-research-')
-    );
-    if (existingResearchIds.length > 0) {
-      const mostRecentId = existingResearchIds
-        .map(key => key.replace('market-research-', ''))
-        .sort((a, b) => parseInt(b) - parseInt(a))[0];
-      setMarketResearchId(mostRecentId);
-    }
-    
-    // Get Brainstorming ID
-    const existingBrainstormingIds = Object.keys(localStorage).filter(
-      key => key.startsWith('brainstorming-')
-    );
-    if (existingBrainstormingIds.length > 0) {
-      const mostRecentId = existingBrainstormingIds
-        .map(key => key.replace('brainstorming-', ''))
-        .sort((a, b) => parseInt(b) - parseInt(a))[0];
-      setBrainstormingId(mostRecentId);
-    }
-    
-    // Get SWOT ID
-    const existingSwotIds = Object.keys(localStorage).filter(
-      key => key.startsWith('swot-')
-    );
-    if (existingSwotIds.length > 0) {
-      const mostRecentId = existingSwotIds
-        .map(key => key.replace('swot-', ''))
-        .sort((a, b) => parseInt(b) - parseInt(a))[0];
-      setSwotId(mostRecentId);
-    }
-  }, [isLoaded]);
+  const { collapsed, setCollapsed } = useSidebar();
 
-  // Create a function to handle navigation with IDs
-  const handleNavigation = (path, id) => {
-    if (id) {
-      router.push(`${path}?id=${id}`);
-    } else {
-      router.push(path);
-    }
-  };
-  
   const navItems = [
-    { name: "Dashboard", href: "/dashboard", icon: <LayoutDashboard className="h-5 w-5" />, id: null },
-    { name: "Market Research", href: "/dashboard/market-research", icon: <Search className="h-5 w-5" />, id: marketResearchId },
-    { name: "SWOT Analysis", href: "/dashboard/swot", icon: <FileText className="h-5 w-5" />, id: swotId },
-    { name: "Risk Assessment", href: "/dashboard/risk", icon: <BarChart3 className="h-5 w-5" />, id: null },
-    { name: "Brainstorm", href: "/dashboard/brainstorming", icon: <Brain className="h-5 w-5" />, id: brainstormingId },
-    { name: "Idea Validation", href: "/dashboard/validate", icon: <Lightbulb className="h-5 w-5" />, id: null },
-    { name: "Competitor Analysis", href: "/dashboard/competitors", icon: <Users className="h-5 w-5" />, id: null },
-    { name: "Account Settings", href: "/account", icon: <Settings className="h-5 w-5" />, id: null },
+    { name: "Dashboard", href: "/dashboard", icon: <LayoutDashboard className="h-5 w-5" /> },
+    { name: "Market Research", href: "/dashboard/market-research", icon: <Search className="h-5 w-5" /> },
+    { name: "SWOT Analysis", href: "/dashboard/swot", icon: <FileText className="h-5 w-5" /> },
+    { name: "Risk Assessment", href: "/dashboard/risk", icon: <BarChart3 className="h-5 w-5" /> },
+    { name: "Brainstorm", href: "/dashboard/brainstorm", icon: <Brain className="h-5 w-5" /> },
+    { name: "Idea Validation", href: "/dashboard/validate", icon: <Lightbulb className="h-5 w-5" /> },
+    { name: "Competitor Analysis", href: "/dashboard/competitor-analysis", icon: <Users className="h-5 w-5" /> },
+    { name: "Account Settings", href: "/account", icon: <Settings className="h-5 w-5" /> },
   ];
 
   return (
-    <Sidebar className="bg-gradient-to-b from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-950">
-      <SidebarHeader className="bg-gradient-to-r from-purple-500 to-blue-600 text-white h-20">
-        <div className="flex items-center justify-center w-full">
-          {!collapsed ? (
-            <div className="flex items-center justify-between w-full">
-              <Link href="/" className="cursor-pointer hover:opacity-80 transition-opacity">
-                <span className="text-3xl font-bold">MarShild</span>
-              </Link>
-              <SidebarTrigger className="bg-white/10 text-white w-12 h-12 flex items-center justify-center rounded-lg hover:bg-white/20 transition-all duration-200" />
+    <Sidebar className="bg-gradient-to-b from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-950 border-r border-slate-200 dark:border-slate-800">
+      {/* Enhanced Header */}
+      <SidebarHeader className="bg-gradient-to-r from-purple-600 to-blue-600 text-white p-4 shadow-lg">
+        <div className="flex items-center justify-between w-full">
+          <Link href="/" className="cursor-pointer hover:opacity-80 transition-all duration-200 hover:scale-105">
+            <div className="flex items-center gap-2">
+              {!collapsed && (
+                <>
+                  <div className="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center">
+                    <span className="text-lg font-bold">M</span>
+                  </div>
+                  <span className="text-xl font-bold tracking-wide">MarShild</span>
+                </>
+              )}
+              {collapsed && (
+                <div className="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center">
+                  <span className="text-lg font-bold">M</span>
+                </div>
+              )}
             </div>
-          ) : (
-            <SidebarTrigger className="bg-white/10 text-white w-12 h-12 flex items-center justify-center rounded-lg hover:bg-white/20 transition-all duration-200" />
-          )}
+          </Link>
+          
+          {/* Sidebar Toggle Button */}
+          <button
+            onClick={() => setCollapsed(!collapsed)}
+            className="p-2 rounded-lg bg-white/10 hover:bg-white/20 transition-all duration-200 hover:scale-105 border border-white/20"
+            aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+          >
+            {collapsed ? (
+              <Menu className="h-4 w-4 text-white" />
+            ) : (
+              <X className="h-4 w-4 text-white" />
+            )}
+          </button>
         </div>
       </SidebarHeader>
 
       {/* Enhanced User Profile Section */}
       {isLoaded && user && (
         <div className={cn(
-          "flex border-b border-slate-200 dark:border-slate-800 transition-all duration-300 bg-white dark:bg-[#212121]",
-          collapsed ? "flex-col py-4 items-center justify-center" : "p-4 items-center"
+          "flex border-b border-slate-200 dark:border-slate-800 bg-white/50 dark:bg-slate-800/50 transition-all duration-300",
+          collapsed ? "flex-col py-6 items-center justify-center" : "p-5 items-center"
         )}>
           <div className={cn(
-            "relative rounded-full overflow-hidden ring-2 ring-purple-500 ring-offset-2 ring-offset-white dark:ring-offset-slate-950",
-            collapsed ? "w-10 h-10" : "w-14 h-14"
+            "relative rounded-full overflow-hidden ring-3 ring-purple-500/30 ring-offset-2 ring-offset-white dark:ring-offset-slate-950 shadow-lg",
+            collapsed ? "w-12 h-12" : "w-16 h-16"
           )}>
             <img 
-              src={user.imageUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.firstName || '')}&background=random`} 
+              src={user.imageUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.firstName || '')}&background=6366f1&color=fff`} 
               alt="Profile"
               className="w-full h-full object-cover"
             />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent"></div>
           </div>
           
           {!collapsed && (
-            <div className="ml-3 overflow-hidden">
-              <p className="font-medium truncate">{user.firstName} {user.lastName}</p>
-              <p className="text-xs text-slate-500 dark:text-slate-400 truncate">
+            <div className="ml-4 overflow-hidden flex-1">
+              <p className="font-semibold text-slate-900 dark:text-white truncate text-sm">
+                {user.firstName} {user.lastName}
+              </p>
+              <p className="text-xs text-slate-500 dark:text-slate-400 truncate mt-0.5">
                 {user.emailAddresses[0]?.emailAddress}
               </p>
+              <div className="flex items-center gap-1 mt-1">
+                <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                <span className="text-xs text-green-600 dark:text-green-400 font-medium">Online</span>
+              </div>
             </div>
           )}
         </div>
       )}
 
-      <SidebarContent>
-        <SidebarGroup title={collapsed ? "" : "Think by yourself"}>
-          <SidebarMenu>
-            {navItems.map((item) => (
+      {/* Enhanced Navigation */}
+      <SidebarContent className="px-3 py-4">
+        <SidebarGroup>
+          {!collapsed && (
+            <div className="mb-4">
+              <h3 className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider px-3">
+                Think by yourself
+              </h3>
+              <div className="h-px bg-gradient-to-r from-purple-500/20 to-blue-500/20 mt-2 mb-4"></div>
+            </div>
+          )}
+          <SidebarMenu className="space-y-1">
+            {navItems.map((item, index) => (
               <SidebarMenuItem key={item.name}>
-                <div onClick={() => handleNavigation(item.href, item.id)}>
+                <Link href={item.href} passHref>
                   <SidebarMenuButton 
                     className={cn(
-                      pathname.startsWith(item.href) && "bg-gradient-to-r from-purple-500/20 to-blue-500/20 text-foreground font-medium",
-                      "cursor-pointer"
+                      "group relative overflow-hidden transition-all duration-200 hover:scale-[1.02] hover:shadow-sm",
+                      "rounded-lg border border-transparent hover:border-purple-200 dark:hover:border-purple-800",
+                      pathname === item.href 
+                        ? "bg-gradient-to-r from-purple-500 to-blue-500 text-white shadow-lg scale-[1.02]" 
+                        : "hover:bg-gradient-to-r hover:from-purple-50 hover:to-blue-50 dark:hover:from-purple-900/20 dark:hover:to-blue-900/20",
+                      collapsed ? "justify-center p-3" : "justify-start p-3"
                     )}
                   >
-                    {item.icon}
-                    <span className={collapsed ? "hidden" : "block"}>{item.name}</span>
+                    <div className={cn(
+                      "flex items-center transition-colors duration-200",
+                      pathname === item.href ? "text-white" : "text-slate-600 dark:text-slate-300",
+                      collapsed ? "" : "gap-3"
+                    )}>
+                      <div className={cn(
+                        "flex items-center justify-center transition-transform duration-200 group-hover:scale-110",
+                        collapsed ? "" : "w-5 h-5"
+                      )}>
+                        {item.icon}
+                      </div>
+                      {!collapsed && (
+                        <span className="font-medium text-sm truncate">{item.name}</span>
+                      )}
+                    </div>
+                    
+                    {/* Active indicator */}
+                    {pathname === item.href && (
+                      <div className="absolute inset-0 bg-gradient-to-r from-white/10 to-white/5 pointer-events-none"></div>
+                    )}
                   </SidebarMenuButton>
-                </div>
+                </Link>
               </SidebarMenuItem>
             ))}
           </SidebarMenu>
         </SidebarGroup>
       </SidebarContent>
       
-      <SidebarFooter>
-        <SignOutButton>
-          <button 
-            className="w-full flex items-center gap-2 px-3 py-2 rounded-md text-muted-foreground hover:bg-muted hover:text-red-600 dark:hover:text-red-400 transition-colors"
-          >
-            <LogOut className="h-5 w-5" />
-            {!collapsed && <span>Sign out</span>}
-          </button>
-        </SignOutButton>
+      {/* Enhanced Footer */}
+      <SidebarFooter className="p-3 border-t border-slate-200 dark:border-slate-800 bg-white/30 dark:bg-slate-800/30">
+        <button 
+          className={cn(
+            "w-full flex items-center gap-3 px-3 py-3 rounded-lg transition-all duration-200",
+            "text-slate-600 dark:text-slate-300 hover:text-red-600 dark:hover:text-red-400",
+            "hover:bg-red-50 dark:hover:bg-red-900/20 hover:border-red-200 dark:hover:border-red-800",
+            "border border-transparent hover:shadow-sm hover:scale-[1.02]",
+            collapsed ? "justify-center" : "justify-start"
+          )}
+          onClick={() => signOut({ redirectUrl: '/' })}
+        >
+          <LogOut className="h-5 w-5" />
+          {!collapsed && <span className="font-medium text-sm">Sign out</span>}
+        </button>
       </SidebarFooter>
     </Sidebar>
   );

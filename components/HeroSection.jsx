@@ -1,10 +1,15 @@
 "use client";
 
-import React from 'react';
+import React, { useState } from 'react';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
+import IdeaValidationModal from './IdeaValidationModal';
+import DemoVideoModal from './DemoVideoModal';
 
 export default function HeroSection() {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isDemoModalOpen, setIsDemoModalOpen] = useState(false);
+
   return (
     <section className="relative pt-32 pb-20 overflow-hidden">
       <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-accent/5 z-0"></div>
@@ -41,10 +46,22 @@ export default function HeroSection() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.6, duration: 0.8 }}
             >
-              <button className="bg-primary text-white px-8 py-3 rounded-full font-semibold shadow-lg hover:shadow-primary/30 hover:bg-primary/90 transition">
+              <button 
+                onClick={() => setIsModalOpen(true)}
+                data-validate-button
+                className="bg-primary text-white px-8 py-3 rounded-full font-semibold shadow-lg hover:shadow-primary/30 hover:bg-primary/90 transition"
+              >
                 Validate Your Idea Now
               </button>
-              <button className="border border-primary text-primary px-8 py-3 rounded-full font-semibold hover:bg-primary/5 transition">
+              <button 
+                onClick={() => {
+                  document.getElementById('how-it-works')?.scrollIntoView({ 
+                    behavior: 'smooth',
+                    block: 'start'
+                  });
+                }}
+                className="border border-primary text-primary px-8 py-3 rounded-full font-semibold hover:bg-primary/5 transition"
+              >
                 See How It Works
               </button>
             </motion.div>
@@ -108,6 +125,7 @@ export default function HeroSection() {
             </div>
             
             <motion.button
+              onClick={() => setIsDemoModalOpen(true)}
               className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white dark:bg-darkbg text-primary px-6 py-3 rounded-full shadow-xl flex items-center gap-2 hover:bg-primary hover:text-white transition z-20"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
@@ -132,6 +150,18 @@ export default function HeroSection() {
           <span className="text-gray-600 dark:text-gray-300 text-sm">10,000+ Top Creators</span>
         </motion.div>
       </div>
+      
+      {/* Idea Validation Modal */}
+      <IdeaValidationModal 
+        isOpen={isModalOpen} 
+        onClose={() => setIsModalOpen(false)} 
+      />
+      
+      {/* Demo Video Modal */}
+      <DemoVideoModal 
+        isOpen={isDemoModalOpen} 
+        onClose={() => setIsDemoModalOpen(false)} 
+      />
     </section>
   );
 }

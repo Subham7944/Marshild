@@ -1,0 +1,34 @@
+{
+    "scenes": [
+      {
+        "name": "Marshild Demo",
+        "sources": [
+          {
+            "name": "Browser Capture",
+            "type": "window_capture",
+            "settings": {
+              "window": "Google Chrome",
+              "capture_cursor": true
+            }
+          },
+          {
+            "name": "Microphone",
+            "type": "audio_input_capture",
+            "settings": {
+              "device_id": "default"
+            }
+          }
+        ]
+      }
+    ],
+    "settings": {
+      "output": {
+        "mode": "Simple",
+        "format": "mp4",
+        "video_bitrate": 2500,
+        "audio_bitrate": 160,
+        "resolution": "1920x1080",
+        "fps": 30
+      }
+    }
+  }

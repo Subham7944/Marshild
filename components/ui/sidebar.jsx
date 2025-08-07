@@ -13,8 +13,9 @@ const Sidebar = ({ children, className, ...props }) => {
   return (
     <aside
       className={cn(
-        "flex flex-col h-screen bg-gradient-to-b from-slate-50 to-slate-100 dark:from-[#212121] dark:to-[#212121] text-slate-900 dark:text-white transition-all duration-300 ease-in-out fixed z-50 top-0 left-0",
-        collapsed ? "w-[70px]" : "w-64",
+        "flex flex-col h-screen bg-gradient-to-b from-slate-800 to-slate-950 text-white transition-all duration-300 ease-in-out fixed z-50 top-0 left-0",
+        collapsed ? "w-16" : "w-64 md:w-64",
+        "shadow-xl border-r border-slate-700",
         className
       )}
       {...props}
