@@ -66,8 +66,8 @@ export default function FAQSection() {
               <button
                 className={`w-full text-left p-6 rounded-xl flex justify-between items-center transition-all duration-300 ${
                   activeIndex === index 
-                    ? 'bg-primary text-gray-100 shadow-lg' 
-                    : 'bg-[#8E24AA] text-gray-100 hover:bg-[#8E24AA]/90 dark:bg-[#8E24AA]/90 dark:hover:bg-[#8E24AA]/80'
+                    ? 'bg-primary text-white shadow-lg' 
+                    : 'bg-gray-100 dark:bg-zinc-800 hover:bg-gray-200 dark:hover:bg-zinc-700'
                 }`}
                 onClick={() => toggleFAQ(index)}
               >

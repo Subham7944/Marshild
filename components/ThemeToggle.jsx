@@ -1,26 +1,42 @@
 "use client";
 
-import React, { useEffect, useState } from 'react';
-import { useTheme } from "next-themes";
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { FiSun, FiMoon } from 'react-icons/fi';
 
 export default function ThemeToggle() {
-  const { resolvedTheme, setTheme } = useTheme();
-  const [mounted, setMounted] = useState(false);
-  
-  // After mounting, we can safely show the UI that depends on the theme
+  const [darkMode, setDarkMode] = useState(false);
+
   useEffect(() => {
-    setMounted(true);
+    // Check for user's preferred theme on initial load
+    if (typeof window !== 'undefined') {
+      // Check localStorage first
+      const storedTheme = localStorage.getItem('theme');
+      
+      if (storedTheme) {
+        setDarkMode(storedTheme === 'dark');
+      } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        // If no stored preference, check system preference
+        setDarkMode(true);
+      }
+    }
   }, []);
 
-  // If not mounted yet, don't render anything to avoid hydration mismatch
-  if (!mounted) {
-    return null;
-  }
+  useEffect(() => {
+    // Update the DOM when theme changes
+    if (typeof document !== 'undefined') {
+      if (darkMode) {
+        document.documentElement.classList.add('dark');
+        localStorage.setItem('theme', 'dark');
+      } else {
+        document.documentElement.classList.remove('dark');
+        localStorage.setItem('theme', 'light');
+      }
+    }
+  }, [darkMode]);
 
   const toggleTheme = () => {
-    setTheme(resolvedTheme === 'dark' ? 'light' : 'dark');
+    setDarkMode(!darkMode);
   };
 
   return (
@@ -31,10 +47,10 @@ export default function ThemeToggle() {
       whileTap={{ scale: 0.9 }}
       aria-label="Toggle dark mode"
     >
-      {resolvedTheme === 'dark' ? (
-        <FiSun className="w-6 h-6 text-yellow-400" />
+      {darkMode ? (
+        <FiSun className="w-6 h-6" />
       ) : (
-        <FiMoon className="w-6 h-6 text-slate-700" />
+        <FiMoon className="w-6 h-6" />
       )}
     </motion.button>
   );

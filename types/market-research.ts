@@ -7,8 +7,6 @@ export interface Competitor {
 }
 
 export interface MarketResearchResult {
-  id: string;
-  timestamp: number;
   competitors: Competitor[];
   marketTrends: string;
   marketPotential: string;
