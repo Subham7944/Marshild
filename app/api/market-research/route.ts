@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
+import OpenAI from 'openai';
 
-// Market research API route with mock data implementation
+// Initialize OpenAI client - we'll use the API key directly in the route handler
+// for better security practice in production, use environment variables
 
 export async function POST(request: NextRequest) {
   try {
@@ -43,38 +45,29 @@ export async function POST(request: NextRequest) {
     }
     `;
 
-    // Generate mock market research data
-    console.log('Generating mock market research data for:', { industry, location, audience });
+    // Call OpenAI API with secure initialization using environment variables
+    const openai = new OpenAI({
+      apiKey: process.env.OPENAI_API_KEY,
+    });
     
-    const mockData = {
-      competitors: [
-        {
-          name: `${industry} Leader Inc`,
-          description: `Leading company in ${industry} serving ${audience}`,
-          foundingDate: "2018",
-          funding: "Series B - $25M",
-          url: `https://${industry.toLowerCase()}leader.com`
-        },
-        {
-          name: `${audience} Solutions`,
-          description: `Specialized platform for ${audience} in ${location}`,
-          foundingDate: "2020",
-          funding: "Series A - $12M",
-          url: `https://${audience.toLowerCase()}solutions.com`
-        },
-        {
-          name: `${location} ${industry} Co`,
-          description: `Regional ${industry} company based in ${location}`,
-          foundingDate: "2019",
-          funding: "Seed - $3M",
-          url: `https://${location.toLowerCase()}${industry.toLowerCase()}.com`
-        }
+    // Check if API key is available
+    if (!process.env.OPENAI_API_KEY) {
+      console.error('OPENAI_API_KEY is not set in environment variables');
+      return NextResponse.json({ error: 'API configuration error' }, { status: 500 });
+    }
+    
+    const completion = await openai.chat.completions.create({
+      messages: [
+        { role: "system", content: "You are a market research expert specializing in startup analysis. Provide accurate, structured data about competitors and market trends." },
+        { role: "user", content: prompt }
       ],
-      marketTrends: `The ${industry} market in ${location} is experiencing significant growth, particularly in segments targeting ${audience}. Key trends include digital transformation, increased demand for personalized solutions, and growing investment in technology infrastructure.`,
-      marketPotential: `The market potential for ${industry} solutions targeting ${audience} in ${location} appears promising. With increasing digitization and changing consumer preferences, there are substantial opportunities for innovative startups. The market size is estimated to grow at 15-20% annually, with particular strength in the ${audience} segment.`
-    };
-    
-    const parsedData = mockData;
+      model: "gpt-3.5-turbo-0125", // Using a cost-effective model
+      response_format: { type: "json_object" },
+    });
+
+    // Extract and parse response
+    const responseContent = completion.choices[0].message.content;
+    const parsedData = JSON.parse(responseContent || '{}');
     
     return NextResponse.json(parsedData);
   } catch (error) {

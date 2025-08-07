@@ -1,12 +1,9 @@
 "use client";
 
-import React, { useState } from 'react';
+import React from 'react';
 import { motion } from 'framer-motion';
-import IdeaValidationModal from './IdeaValidationModal';
 
 export default function CTASection() {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
   return (
     <section className="py-24 relative overflow-hidden">
       <div className="absolute inset-0 bg-gradient-to-br from-primary to-accent opacity-90 z-0"></div>
@@ -61,10 +58,7 @@ export default function CTASection() {
             viewport={{ once: true }}
             transition={{ delay: 0.6, duration: 0.6 }}
           >
-            <button 
-              onClick={() => setIsModalOpen(true)}
-              className="text-white underline hover:text-white/80 transition text-lg"
-            >
+            <button className="text-white underline hover:text-white/80 transition text-lg">
               Try a Demo Idea
             </button>
             
@@ -74,12 +68,6 @@ export default function CTASection() {
           </motion.div>
         </div>
       </div>
-      
-      {/* Idea Validation Modal */}
-      <IdeaValidationModal 
-        isOpen={isModalOpen} 
-        onClose={() => setIsModalOpen(false)} 
-      />
     </section>
   );
 }

@@ -1,9 +1,9 @@
 import { Inter } from 'next/font/google'
+import { ClerkProvider } from '@clerk/nextjs';
 import './globals.css'
 import Header from '../components/Header'
 import ThemeToggle from '../components/ThemeToggle'
-import ConditionalClerkProvider from '../components/ConditionalClerkProvider'
-import { StartupIdeaProvider } from '../contexts/StartupIdeaContext.jsx'
+import { ThemeProvider } from '../components/theme-provider'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -32,16 +32,17 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <ConditionalClerkProvider>
-      <html lang="en">
-        <body className={`${inter.className} bg-background dark:bg-darkbg text-gray-900 dark:text-white transition-colors duration-300`}>
-          <StartupIdeaProvider>
-            <Header />
+    <ClerkProvider>
+      <html lang="en" suppressHydrationWarning>
+        <head />
+        <body className={`${inter.className} bg-background text-gray-900 transition-colors duration-300`}>
+          <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+            <ConditionalHeader />
             {children}
             <ThemeToggle />
-          </StartupIdeaProvider>
+          </ThemeProvider>
         </body>
       </html>
-    </ConditionalClerkProvider>
+    </ClerkProvider>
   )
 }
